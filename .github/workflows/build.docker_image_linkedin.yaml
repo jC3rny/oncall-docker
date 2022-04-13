@@ -68,10 +68,6 @@ jobs:
         run: |
           sed -i 's/\(FROM\) ubuntu:.*$/\1 ubuntu:${{ env.UBUNTU_IMAGE_TAG }}/' ./Dockerfile
 
-          cat ./Dockerfile
-
-          exit 1
-
 
       - name: Set up Docker Buildx
         if: env.DOCKER_BUILD_CONTINUE == 'true'
