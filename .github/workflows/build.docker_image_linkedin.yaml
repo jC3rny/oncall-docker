@@ -41,7 +41,7 @@ jobs:
           ONCALL_DOCKER_TAG="$(${{ env.GIT_LS_REMOTE_CMD }} ${{ env.ONCALL_REPO_URL }} | cut --delimiter='/' --fields=3 | tail --lines=1)"
           UBUNTU_IMAGE_TAG="$(curl -sSL -X GET "${{ env.DOCKERHUB_URL }}/library/ubuntu/tags/?page_size=100" | jq -r '.results[] | select(.name | test("${{ matrix.os }}")) .name' | sort | tail --lines=1)"
 
-          BUILD_IMAGE_TAG_FULL="${ONCALL_DOCKER_TAG}-${UBUNTU_IMAGE_TAG}-linkedin"
+          BUILD_IMAGE_TAG_FULL="${ONCALL_DOCKER_TAG}-${UBUNTU_IMAGE_TAG}"
           
           if [ -z "$(grep -E "^${BUILD_IMAGE_TAG_FULL}$" <<< ${DOCKERHUB_PUSHED_TAGS})" ]; then
               echo DOCKER_BUILD_CONTINUE="true" >> $GITHUB_ENV
@@ -52,7 +52,7 @@ jobs:
           echo ONCALL_DOCKER_TAG=${ONCALL_DOCKER_TAG} >> $GITHUB_ENV
           echo UBUNTU_IMAGE_TAG=${UBUNTU_IMAGE_TAG} >> $GITHUB_ENV
           echo BUILD_IMAGE_TAG_FULL=${BUILD_IMAGE_TAG_FULL} >> $GITHUB_ENV
-          echo BUILD_IMAGE_TAG_BASE="${ONCALL_DOCKER_TAG}-${{ matrix.os }}-linkedin" >> $GITHUB_ENV
+          echo BUILD_IMAGE_TAG_BASE="${ONCALL_DOCKER_TAG}-${{ matrix.os }}" >> $GITHUB_ENV
           
 
       - name: DEBUG
@@ -89,6 +89,9 @@ jobs:
           context: "."
           file: "./Dockerfile"
           push: true
+          build-args: |
+            DEBIAN_FRONTEND="noninteractive"
+            TZ="Europe/Prague"
           tags: |
             ${{ env.DOCKERHUB_REPO }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.BUILD_IMAGE_TAG_FULL }}
             ${{ env.DOCKERHUB_REPO }}/${{ env.DOCKERHUB_IMAGE_NAME }}:${{ env.BUILD_IMAGE_TAG_BASE }}
