@@ -27,7 +27,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "bionic", "focal" ]
+        os: [ "bionic" ]
+        # os: [ "bionic", "focal" ]
     
     steps:
       - uses: actions/checkout@v2
